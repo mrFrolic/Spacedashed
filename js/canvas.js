@@ -58,7 +58,7 @@ void display() {
 	for (int i = 0; i < 45; i+=4){
 		turbo(i+frameCount%(6), (i+2*(frameCount%(6)))*6);
 	}
-	mechant();
+	//mechant();
 	ship();
 	
 }
