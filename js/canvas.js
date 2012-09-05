@@ -1,25 +1,36 @@
 var X, Y;
-var nX, nY;
+var speed;
 var truc, alpha;
-var delay = 14;
+var delay = 26;
 var line_pos = 0;
 int mechant_positionX = 50;
 int mechant_positionY = 50;
+X = width >> 1;
+
+
+/* ------------------------------------------
+				JAVASCRIPT   
+------------------------------------------  */
+
 
 document.getElementById("canvas").focus();
+function loadContent() {
+	$('header p:first-child span').text( int(frameRate) );
+	$('header p:nth-child(2) span').text( int(X) );
+}
+
+
+//------------------------------------------//
+
+void mouseMoved() {
+	speed = mouseX;
+}
 
 void  setup() {
 	size(10, 10);
 	background(15, 32, 48);
 	frameRate(60);
-	ProcessingInit();
-	nX = X;
-	X = width >> 1;
-	
-}
-function loadContent() {
-	$('header p:first-child span').text( int(frameRate) );
-	$('header p:nth-child(2) span').text( int(X) );
+	ProcessingInit();	
 }
 
 void draw() {
@@ -33,12 +44,9 @@ void draw() {
 void resize(X, Y) {
 	size(X, Y);
 }
-void mouseMoved() {
-	nX = mouseX;
-	nY = mouseY;
-}
+
 void update() {
-	X+=(nX-X)/delay;
+	X+=(speed-X)/delay;
 	line_pos += .9;
 	line_pos = line_pos > 80 ? 0 : line_pos;
 	mechant_positionX += 5;
@@ -52,22 +60,38 @@ void update() {
 		mechant_positionX = mechant_positionX;
 	}
 	console.log(frameRate);
-	/*
+
 	mechant_positionX = mechant_positionX > width - 420 ? 50 : mechant_positionX;
 	mechant_positionY = mechant_positionX > width - 420 ? mechant_positionY += 100 : mechant_positionY = mechant_positionY ;
-	*/
+
 
 }
-	
+
 void display() {
 	background(15, 32, 48);
 	ligneVerticales();
 	for (int i = 0; i < 45; i+=4){
 		turbo(i+frameCount%(6), (i+2*(frameCount%(6)))*6);
 	}
-	//mechant();
+	mechant();
 	ship();
-	
+
+}
+
+void keyPressed() {
+  if (key == CODED) {
+	if (keyCode == LEFT) {
+		if (speed < width){
+	  speed -= (1 + speed)*0.15;
+	  }
+	} else if (keyCode == RIGHT) {
+		if (speed < width){
+	  speed += (1 + speed)*0.15;
+	  }
+	} 
+  } else {
+	  speed = 0;
+  }
 }
 
 //------------------------------------------//
