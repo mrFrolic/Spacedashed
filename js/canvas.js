@@ -17,6 +17,7 @@ document.getElementById("canvas").focus();
 function loadContent() {
 	$('header p:first-child span').text( int(frameRate) );
 	$('header p:nth-child(2) span').text( int(X) );
+	$('header p:nth-child(3) span').text( int(speed) );
 }
 
 
@@ -81,16 +82,11 @@ void display() {
 void keyPressed() {
   if (key == CODED) {
 	if (keyCode == LEFT) {
-		if (speed < width){
 	  speed -= (1 + speed)*0.15;
-	  }
 	} else if (keyCode == RIGHT) {
-		if (speed < width){
 	  speed += (1 + speed)*0.15;
-	  }
 	} 
   } else {
-	  speed = 0;
   }
 }
 
