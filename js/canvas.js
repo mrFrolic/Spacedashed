@@ -14,11 +14,17 @@ void  setup() {
 	frameRate(60);
 	ProcessingInit();
 	nX = X;
-	nY = Y;
+	X = width >> 1;
 	
 }
+function loadContent() {
+	$('header p:first-child span').text( int(frameRate) );
+	$('header p:nth-child(2) span').text( int(X) );
+}
+
 void draw() {
 	update();
+	loadContent();
 	display();
 }
 
@@ -45,6 +51,7 @@ void update() {
 	}else{
 		mechant_positionX = mechant_positionX;
 	}
+	console.log(frameRate);
 	/*
 	mechant_positionX = mechant_positionX > width - 420 ? 50 : mechant_positionX;
 	mechant_positionY = mechant_positionX > width - 420 ? mechant_positionY += 100 : mechant_positionY = mechant_positionY ;

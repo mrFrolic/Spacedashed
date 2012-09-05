@@ -20,6 +20,26 @@ html{
 	height: 100%;
 }
 
+header{
+	position: absolute;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	background: rgba(40, 40, 40, 0.4);
+	width: 150px;
+	height: 250px;
+	top: 8px;
+	left: 8px;
+	padding: 15px 25px;
+}
+
+header p {
+	color: #fff;
+	font-family: 'EdmondSansRegular';
+	font-size: 11px;
+	line-height: 12px;
+}
+
 body {
 	margin: 0;
 	padding: 0;
