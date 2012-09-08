@@ -1,11 +1,16 @@
 var X, Y;
-var speed;
+var horizontal_speed = 0;
+var speed_x = 0;
 var truc, alpha;
 var delay = 26;
 var line_pos = 0;
 int mechant_positionX = 50;
 int mechant_positionY = 50;
-X = width >> 1;
+Array mechants_array;
+ArrayList shots_array;
+int:constant border_limit = 80;
+bool shooting = false;
+float delta_time = 0;
 
 
 /* ------------------------------------------
@@ -17,21 +22,91 @@ document.getElementById("canvas").focus();
 function loadContent() {
 	$('header p:first-child span').text( int(frameRate) );
 	$('header p:nth-child(2) span').text( int(X) );
-	$('header p:nth-child(3) span').text( int(speed) );
+	$('header p:nth-child(3) span').text( int(speed_x) );
 }
 
+
+//-- CLASSE MECHANT --//
+
+class Mechant {
+	public float pos_x;
+	public float pos_y;
+	public float speed;
+
+	Mechant(_pos_x, _pos_y, _speed)
+	{
+		pos_x = _pos_x;
+		pos_y = _pos_y;
+		speed = _speed;
+	}
+
+	void update()
+	{
+		pos_x += speed;
+		if (pos_x > width)
+		{
+			pos_x = 0;
+			pos_y += 100;
+		}
+		if (pos_y > height - 100)
+		{
+			pos_y = 0;
+		}
+	}
+
+	void draw()
+	{
+		noStroke();
+		fill(196, 54, 85);
+		rectMode(CENTER);
+		rect(pos_x, pos_y, 20, 50);
+	}
+}
+
+//----- SHOT CLASS ----//
+
+class Shot {
+	public float pos_x;
+	public float pos_y;
+	public float speed;
+	public bool deleted = false;
+
+	Shot(_pos_x, _pos_y, _speed)
+	{
+		pos_x = _pos_x;
+		pos_y = _pos_y;
+		speed = _speed;
+	}
+
+	void update()
+	{
+		pos_y -= speed;
+		if (pos_y < 0)
+			deleted = true;
+	}
+
+	void draw()
+	{
+		noStroke();
+		fill(196, 54, 85);
+		rectMode(CENTER);
+		rect(pos_x, pos_y, 5, 10);
+	}
+}
 
 //------------------------------------------//
 
-void mouseMoved() {
-	speed = mouseX;
-}
-
 void  setup() {
-	size(10, 10);
 	background(15, 32, 48);
-	frameRate(60);
+	frameRate(40);
 	ProcessingInit();	
+	X = width >> 1;
+	
+	mechants_array = new Mechant[10];
+	for (int i = 0; i < 10; i++)
+		mechants_array[i] = new Mechant(i * 50, 0, 5);
+	
+	shots_array = new ArrayList();
 }
 
 void draw() {
@@ -42,30 +117,37 @@ void draw() {
 
 //------------------------------------------//
 
-void resize(X, Y) {
-	size(X, Y);
+void resize(w, h) {
+	size(w, h);
+	X = X > w ? w : X - border_limit;
 }
 
 void update() {
-	X+=(speed-X)/delay;
+	
+	speed_x += (horizontal_speed - speed_x) * .1;
+	if (X > width - border_limit && speed_x > 0)
+		speed_x += ((width - border_limit - X) -speed_x) * .5;
+	else if (X < 80 && speed_x < 0)
+		speed_x += ((border_limit - X) -speed_x) * .5;
+	X += speed_x;
+	
 	line_pos += .9;
-	line_pos = line_pos > 80 ? 0 : line_pos;
-	mechant_positionX += 5;
-	if(mechant_positionX > width - 420){
-		mechant_positionX = 50;
-		mechant_positionY += 100;
-	}else if(mechant_positionY > height-200){
-		mechant_positionX = 50;
-		mechant_positionY = 50;
-	}else{
-		mechant_positionX = mechant_positionX;
+	line_pos = line_pos > border_limit ? 0 : line_pos;
+
+	for (int i = 0; i < mechants_array.length; i++)
+		mechants_array[i].update();
+		
+	Shot s;
+	for (int i = 0; i < shots_array.size(); i++)
+	{
+		s = shots_array.get(i);
+		s.update();	
+		if (s.deleted)
+			shots_array.remove(s);
 	}
-	console.log(frameRate);
-
-	mechant_positionX = mechant_positionX > width - 420 ? 50 : mechant_positionX;
-	mechant_positionY = mechant_positionX > width - 420 ? mechant_positionY += 100 : mechant_positionY = mechant_positionY ;
-
-
+	
+	if (shooting && shots_array.size() < 60)
+		shots_array.add(new Shot(X, height - 120, 12));
 }
 
 void display() {
@@ -74,22 +156,40 @@ void display() {
 	for (int i = 0; i < 45; i+=4){
 		turbo(i+frameCount%(6), (i+2*(frameCount%(6)))*6);
 	}
-	mechant();
 	ship();
 
+	console.log(shots_array.size());
+
+	for (int i = 0; i < mechants_array.length; i++)
+		mechants_array[i].draw();
+	for (int i = 0; i < shots_array.size(); i++)
+		shots_array.get(i).draw();
 }
 
-void keyPressed() {
+void keyPressed()
+{
   if (key == CODED) {
 	if (keyCode == LEFT) {
-	  speed -= (1 + speed)*0.15;
+	  horizontal_speed = -20;
 	} else if (keyCode == RIGHT) {
-	  speed += (1 + speed)*0.15;
-	} 
-  } else {
+	  horizontal_speed = 20;
+	}
   }
+  
+  if (key == ' ')
+  	shooting = true;
 }
 
+void keyReleased()
+{
+   if (key == CODED) {
+	if (keyCode == LEFT || keyCode == RIGHT) {
+	  horizontal_speed = 0;
+	}
+  }
+  if (key == ' ')
+  	shooting = false;
+}
 //------------------------------------------//
 
 void ligneVerticales() {
@@ -151,15 +251,3 @@ void ship(){
 	fill(5);
 	rect(X, height-59,75,3);
 };
-
-
-//------------------------------------------//
-
-void mechant(){
-	noStroke();
-	fill(196, 54, 85);
-	rectMode(CENTER);
-	for (int i = 0 ; i < 8; i++){
-		rect(mechant_positionX + 50*i, mechant_positionY, 20, 50);
-	}
-}
