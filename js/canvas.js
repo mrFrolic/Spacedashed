@@ -48,7 +48,7 @@ class Mechant {
 			pos_x = 0;
 			pos_y += 100;
 		}
-		if (pos_y > height - 100)
+		if (pos_y > height - 200)
 		{
 			pos_y = 0;
 		}
@@ -90,7 +90,8 @@ class Shot {
 		noStroke();
 		fill(196, 54, 85);
 		rectMode(CENTER);
-		rect(pos_x, pos_y, 5, 10);
+		rect(pos_x+14, pos_y, 2, 10);
+		rect(pos_x-15, pos_y, 2, 10);
 	}
 }
 
@@ -102,8 +103,8 @@ void  setup() {
 	ProcessingInit();	
 	X = width >> 1;
 	
-	mechants_array = new Mechant[10];
-	for (int i = 0; i < 10; i++)
+	mechants_array = new Mechant[20];
+	for (int i = 0; i < 20; i++)
 		mechants_array[i] = new Mechant(i * 50, 0, 5);
 	
 	shots_array = new ArrayList();
@@ -146,8 +147,8 @@ void update() {
 			shots_array.remove(s);
 	}
 	
-	if (shooting && shots_array.size() < 60)
-		shots_array.add(new Shot(X, height - 120, 12));
+	if (shooting && shots_array.size() < 20)
+		shots_array.add(new Shot(X, height - 103, 12));
 }
 
 void display() {
@@ -195,11 +196,11 @@ void keyReleased()
 void ligneVerticales() {
 	for ( i = 0; i < height; i += 80) {
 		for ( j = 0; j < width; j += 80) {
-			stroke(20, 37, 53);
+			stroke(22, 39, 55);
 			line(0, i + line_pos, width, i + line_pos);
 			line(j + 0.1 * X, 0, j + 0.1 * X, height);
 
-			stroke(5, 22, 38);
+			stroke(0, 12, 28);
 			line(j - width * 0.003, i, j + width * 0.003, i);
 			line(j, i - height * 0.005, j, i + height * 0.005);
 
